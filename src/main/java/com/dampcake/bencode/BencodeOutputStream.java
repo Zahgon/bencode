@@ -44,8 +44,8 @@ public class BencodeOutputStream extends FilterOutputStream {
      */
     public BencodeOutputStream(final OutputStream out, final Charset charset) {
         super(out);
-
-        if (charset == null) throw new NullPointerException("charset cannot be null");
+        if (charset == null)
+            throw new NullPointerException("charset cannot be null");
         this.charset = charset;
     }
 
@@ -64,7 +64,7 @@ public class BencodeOutputStream extends FilterOutputStream {
      * @return the {@link Charset} of the stream
      */
     public Charset getCharset() {
-        return charset;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -76,7 +76,7 @@ public class BencodeOutputStream extends FilterOutputStream {
      * @throws IOException          if the underlying stream throws
      */
     public void writeString(final String s) throws IOException {
-        write(encode(s));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -90,7 +90,7 @@ public class BencodeOutputStream extends FilterOutputStream {
      * @since 1.3
      */
     public void writeString(final ByteBuffer buff) throws IOException {
-        write(encode(buff.array()));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -104,7 +104,7 @@ public class BencodeOutputStream extends FilterOutputStream {
      * @since 1.4.1
      */
     public void writeString(final byte[] array) throws IOException {
-        write(encode(array));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -112,14 +112,14 @@ public class BencodeOutputStream extends FilterOutputStream {
      * <p>
      * The number is converted to a {@link Long}, meaning any precision is lost as it not supported by the bencode spec.
      * </p>
-     * 
+     *
      * @param n the {@link Number} to write to the stream
      *
      * @throws NullPointerException if the {@link Number} is null
      * @throws IOException          if the underlying stream throws
      */
     public void writeNumber(final Number n) throws IOException {
-        write(encode(n));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -135,7 +135,7 @@ public class BencodeOutputStream extends FilterOutputStream {
      * @throws IOException          if the underlying stream throws
      */
     public void writeList(final Iterable<?> l) throws IOException {
-        write(encode(l));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -151,65 +151,58 @@ public class BencodeOutputStream extends FilterOutputStream {
      * @throws IOException          if the underlying stream throws
      */
     public void writeDictionary(final Map<?, ?> m) throws IOException {
-        write(encode(m));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     private byte[] encode(final String s) throws IOException {
-        if (s == null) throw new NullPointerException("s cannot be null");
-
+        if (s == null)
+            throw new NullPointerException("s cannot be null");
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         byte[] bytes = s.getBytes(charset);
         buffer.write(Integer.toString(bytes.length).getBytes(charset));
         buffer.write(Bencode.SEPARATOR);
         buffer.write(bytes);
-
         return buffer.toByteArray();
     }
 
     private byte[] encode(final byte[] b) throws IOException {
-        if (b == null) throw new NullPointerException("b cannot be null");
-
+        if (b == null)
+            throw new NullPointerException("b cannot be null");
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
         buffer.write(Integer.toString(b.length).getBytes(charset));
         buffer.write(Bencode.SEPARATOR);
         buffer.write(b);
-
         return buffer.toByteArray();
     }
 
     private byte[] encode(final Number n) throws IOException {
-        if (n == null) throw new NullPointerException("n cannot be null");
-
+        if (n == null)
+            throw new NullPointerException("n cannot be null");
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         buffer.write(Bencode.NUMBER);
         buffer.write(Long.toString(n.longValue()).getBytes(charset));
         buffer.write(Bencode.TERMINATOR);
-
         return buffer.toByteArray();
     }
 
     private byte[] encode(final Iterable<?> l) throws IOException {
-        if (l == null) throw new NullPointerException("l cannot be null");
-
+        if (l == null)
+            throw new NullPointerException("l cannot be null");
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         buffer.write(Bencode.LIST);
-        for (Object o : l)
-            buffer.write(encodeObject(o));
+        for (Object o : l) buffer.write(encodeObject(o));
         buffer.write(Bencode.TERMINATOR);
-
         return buffer.toByteArray();
     }
 
     private byte[] encode(final Map<?, ?> m) throws IOException {
-        if (m == null) throw new NullPointerException("m cannot be null");
-
+        if (m == null)
+            throw new NullPointerException("m cannot be null");
         Map<?, ?> map;
         if (!(m instanceof SortedMap<?, ?>))
             map = new TreeMap<>(m);
         else
             map = m;
-
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         buffer.write(Bencode.DICTIONARY);
         for (Map.Entry<?, ?> e : map.entrySet()) {
@@ -217,13 +210,12 @@ public class BencodeOutputStream extends FilterOutputStream {
             buffer.write(encodeObject(e.getValue()));
         }
         buffer.write(Bencode.TERMINATOR);
-
         return buffer.toByteArray();
     }
 
     private byte[] encodeObject(final Object o) throws IOException {
-        if (o == null) throw new NullPointerException("Cannot write null objects");
-
+        if (o == null)
+            throw new NullPointerException("Cannot write null objects");
         if (o instanceof Number)
             return encode((Number) o);
         if (o instanceof Iterable<?>)
@@ -234,7 +226,6 @@ public class BencodeOutputStream extends FilterOutputStream {
             return encode(((ByteBuffer) o).array());
         if (o instanceof byte[])
             return encode((byte[]) o);
-
         return encode(o.toString());
     }
 }

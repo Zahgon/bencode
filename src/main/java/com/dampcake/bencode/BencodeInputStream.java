@@ -40,7 +40,9 @@ public class BencodeInputStream extends FilterInputStream {
     private static final int EOF = -1;
 
     private final Charset charset;
+
     private final boolean useBytes;
+
     private final PushbackInputStream in;
 
     /**
@@ -55,14 +57,14 @@ public class BencodeInputStream extends FilterInputStream {
      * @param useBytes controls coercion of dictionary values
      *
      * @throws NullPointerException if the {@link Charset} passed is null
-     * 
+     *
      * @since 1.3
      */
     public BencodeInputStream(final InputStream in, final Charset charset, boolean useBytes) {
         super(new PushbackInputStream(in));
         this.in = (PushbackInputStream) super.in;
-
-        if (charset == null) throw new NullPointerException("charset cannot be null");
+        if (charset == null)
+            throw new NullPointerException("charset cannot be null");
         this.charset = charset;
         this.useBytes = useBytes;
     }
@@ -100,7 +102,7 @@ public class BencodeInputStream extends FilterInputStream {
      * @return the {@link Charset} of the stream
      */
     public Charset getCharset() {
-        return charset;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     private int peek() throws IOException {
@@ -118,10 +120,7 @@ public class BencodeInputStream extends FilterInputStream {
      * @throws EOFException if the end of the stream has been reached
      */
     public Type nextType() throws IOException {
-        int token = peek();
-        checkEOF(token);
-
-        return typeForToken(token);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     private Type typeForToken(int token) {
@@ -129,7 +128,6 @@ public class BencodeInputStream extends FilterInputStream {
             if (type.validate(token))
                 return type;
         }
-
         return Type.UNKNOWN;
     }
 
@@ -143,7 +141,7 @@ public class BencodeInputStream extends FilterInputStream {
      * @throws InvalidObjectException if the next type in the stream is not a String
      */
     public String readString() throws IOException {
-        return new String(readStringBytesInternal(), getCharset());
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -154,25 +152,22 @@ public class BencodeInputStream extends FilterInputStream {
      * @throws IOException            if the underlying stream throws
      * @throws EOFException           if the end of the stream has been reached
      * @throws InvalidObjectException if the next type in the stream is not a String
-     * 
+     *
      * @since 1.3
      */
     public ByteBuffer readStringBytes() throws IOException {
-        return ByteBuffer.wrap(readStringBytesInternal());
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     private byte[] readStringBytesInternal() throws IOException {
         int token = in.read();
         validateToken(token, Type.STRING);
-
         StringBuilder buffer = new StringBuilder();
         buffer.append((char) token);
         while ((token = in.read()) != Bencode.SEPARATOR) {
             validateToken(token, Type.STRING);
-
             buffer.append((char) token);
         }
-
         int length = Integer.parseInt(buffer.toString());
         byte[] bytes = new byte[length];
         read(bytes);
@@ -189,17 +184,7 @@ public class BencodeInputStream extends FilterInputStream {
      * @throws InvalidObjectException if the next type in the stream is not a Number
      */
     public Long readNumber() throws IOException {
-        int token = in.read();
-        validateToken(token, Type.NUMBER);
-
-        StringBuilder buffer = new StringBuilder();
-        while ((token = in.read()) != Bencode.TERMINATOR) {
-            checkEOF(token);
-
-            buffer.append((char) token);
-        }
-
-        return new BigDecimal(buffer.toString()).longValue();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -212,17 +197,7 @@ public class BencodeInputStream extends FilterInputStream {
      * @throws InvalidObjectException if the next type in the stream is not a List, or the list contains invalid types
      */
     public List<Object> readList() throws IOException {
-        int token = in.read();
-        validateToken(token, Type.LIST);
-
-        List<Object> list = new ArrayList<Object>();
-        while ((token = in.read()) != Bencode.TERMINATOR) {
-            checkEOF(token);
-
-            list.add(readObject(token));
-        }
-
-        return list;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -235,25 +210,12 @@ public class BencodeInputStream extends FilterInputStream {
      * @throws InvalidObjectException if the next type in the stream is not a Dictionary, or the list contains invalid types
      */
     public Map<String, Object> readDictionary() throws IOException {
-        int token = in.read();
-        validateToken(token, Type.DICTIONARY);
-
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
-        while ((token = in.read()) != Bencode.TERMINATOR) {
-            checkEOF(token);
-
-            in.unread(token);
-            map.put(readString(), readObject(in.read()));
-        }
-
-        return map;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     private Object readObject(final int token) throws IOException {
         in.unread(token);
-
         Type type = typeForToken(token);
-
         if (type == Type.STRING && !useBytes)
             return readString();
         if (type == Type.STRING)
@@ -264,13 +226,11 @@ public class BencodeInputStream extends FilterInputStream {
             return readList();
         if (type == Type.DICTIONARY)
             return readDictionary();
-
         throw new InvalidObjectException("Unexpected token '" + new String(Character.toChars(token)) + "'");
     }
 
     private void validateToken(final int token, final Type type) throws IOException {
         checkEOF(token);
-
         if (!type.validate(token)) {
             in.unread(token);
             throw new InvalidObjectException("Unexpected token '" + new String(Character.toChars(token)) + "'");
@@ -278,6 +238,7 @@ public class BencodeInputStream extends FilterInputStream {
     }
 
     private void checkEOF(final int b) throws EOFException {
-        if (b == EOF) throw new EOFException();
+        if (b == EOF)
+            throw new EOFException();
     }
 }

@@ -26,12 +26,17 @@ import java.util.Map;
 public class Type<T> {
 
     public static final Type<String> STRING = new Type<String>(new StringValidator());
+
     public static final Type<Long> NUMBER = new Type<Long>(new TypeValidator(Bencode.NUMBER));
+
     public static final Type<List<Object>> LIST = new Type<List<Object>>(new TypeValidator(Bencode.LIST));
+
     public static final Type<Map<String, Object>> DICTIONARY = new Type<Map<String, Object>>(new TypeValidator(Bencode.DICTIONARY));
+
     public static final Type<Void> UNKNOWN = new Type<Void>(new Validator() {
+
         public boolean validate(int token) {
-            return false;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     });
 
@@ -42,10 +47,10 @@ public class Type<T> {
     }
 
     boolean validate(final int token) {
-        return validator.validate(token);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     public static Type[] values() {
-        return new Type[] { STRING, NUMBER, LIST, DICTIONARY, UNKNOWN };
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

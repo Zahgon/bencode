@@ -29,30 +29,43 @@ import java.util.Map;
  */
 public final class Bencode {
 
-    /** Default Charset used by the Streams */
+    /**
+     * Default Charset used by the Streams
+     */
     static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
-    /** Number Marker */
+    /**
+     * Number Marker
+     */
     static final char NUMBER = 'i';
 
-    /** List Marker */
+    /**
+     * List Marker
+     */
     static final char LIST = 'l';
 
-    /** Dictionary Marker */
+    /**
+     * Dictionary Marker
+     */
     static final char DICTIONARY = 'd';
 
-    /** End of type Marker */
+    /**
+     * End of type Marker
+     */
     static final char TERMINATOR = 'e';
 
-    /** Separator between length and string */
+    /**
+     * Separator between length and string
+     */
     static final char SEPARATOR = ':';
 
     private final Charset charset;
+
     private final boolean useBytes;
 
     /**
      * Create a new Bencoder using the default {@link Charset} (UTF-8) and useBytes as false.
-     * 
+     *
      * @see #Bencode(Charset, boolean)
      */
     public Bencode() {
@@ -65,7 +78,7 @@ public final class Bencode {
      * @param charset the {@link Charset} to use
      *
      * @throws NullPointerException if the {@link Charset} passed is null
-     * 
+     *
      * @see #Bencode(Charset, boolean)
      */
     public Bencode(final Charset charset) {
@@ -75,8 +88,8 @@ public final class Bencode {
     /**
      * Creates a new Bencoder using the boolean passed to control String parsing.
      *
-     * @param useBytes {@link #Bencode(Charset, boolean)} 
-     * 
+     * @param useBytes {@link #Bencode(Charset, boolean)}
+     *
      * @since 1.3
      */
     public Bencode(final boolean useBytes) {
@@ -85,7 +98,7 @@ public final class Bencode {
 
     /**
      * Creates a new Bencoder using the {@link Charset} passed for encoding/decoding and boolean passed to control String parsing.
-     * 
+     *
      * If useBytes is false, then dictionary values that contain byte string data will be coerced to a {@link String}.
      * if useBytes is true, then dictionary values that contain byte string data will be coerced to a {@link java.nio.ByteBuffer}.
      *
@@ -93,12 +106,12 @@ public final class Bencode {
      * @param useBytes true to have dictionary byte data to stay as bytes
      *
      * @throws NullPointerException if the {@link Charset} passed is null
-     * 
+     *
      * @since 1.3
      */
     public Bencode(final Charset charset, final boolean useBytes) {
-        if (charset == null) throw new NullPointerException("charset cannot be null");
-
+        if (charset == null)
+            throw new NullPointerException("charset cannot be null");
         this.charset = charset;
         this.useBytes = useBytes;
     }
@@ -109,7 +122,7 @@ public final class Bencode {
      * @return the {@link Charset} of the coder
      */
     public Charset getCharset() {
-        return charset;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -123,13 +136,7 @@ public final class Bencode {
      * @throws BencodeException     if an error occurs during detection
      */
     public Type type(final byte[] bytes) {
-        if (bytes == null) throw new NullPointerException("bytes cannot be null");
-
-        try (BencodeInputStream in = new BencodeInputStream(new ByteArrayInputStream(bytes), charset, useBytes)) {
-            return in.nextType();
-        } catch (Throwable t) {
-            throw new BencodeException("Exception thrown during type detection", t);
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -147,21 +154,7 @@ public final class Bencode {
      */
     @SuppressWarnings("unchecked")
     public <T> T decode(final byte[] bytes, final Type<T> type) {
-        if (bytes == null) throw new NullPointerException("bytes cannot be null");
-        if (type == null) throw new NullPointerException("type cannot be null");
-        if (type == Type.UNKNOWN) throw new IllegalArgumentException("type cannot be UNKNOWN");
-
-        try (BencodeInputStream in = new BencodeInputStream(new ByteArrayInputStream(bytes), charset, useBytes)) {
-            if (type == Type.NUMBER)
-                return (T) in.readNumber();
-            if (type == Type.LIST)
-                return (T) in.readList();
-            if (type == Type.DICTIONARY)
-                return (T) in.readDictionary();
-            return (T) in.readString();
-        } catch (Throwable t) {
-            throw new BencodeException("Exception thrown during decoding", t);
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -175,9 +168,7 @@ public final class Bencode {
      * @throws BencodeException     if an error occurs during encoding
      */
     public byte[] encode(final String s) {
-        if (s == null) throw new NullPointerException("s cannot be null");
-
-        return encode(bencode -> bencode.writeString(s));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -193,9 +184,7 @@ public final class Bencode {
      * @throws BencodeException     if an error occurs during encoding
      */
     public byte[] encode(final Number n) {
-        if (n == null) throw new NullPointerException("n cannot be null");
-
-        return encode(bencode -> bencode.writeNumber(n));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -213,9 +202,7 @@ public final class Bencode {
      * @throws BencodeException     if an error occurs during encoding
      */
     public byte[] encode(final Iterable<?> l) {
-        if (l == null) throw new NullPointerException("l cannot be null");
-
-        return encode(bencode -> bencode.writeList(l));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -233,25 +220,22 @@ public final class Bencode {
      * @throws BencodeException     if an error occurs during encoding
      */
     public byte[] encode(final Map<?, ?> m) {
-        if (m == null) throw new NullPointerException("m cannot be null");
-
-        return encode(bencode -> bencode.writeDictionary(m));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     private byte[] encode(final ThrowingConsumer<BencodeOutputStream> function) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-
         try (BencodeOutputStream bencode = new BencodeOutputStream(out, charset)) {
             function.accept(bencode);
         } catch (Throwable t) {
             throw new BencodeException("Exception thrown during encoding", t);
         }
-
         return out.toByteArray();
     }
 
     @FunctionalInterface
     public interface ThrowingConsumer<T> {
+
         public void accept(T t) throws IOException;
     }
 }

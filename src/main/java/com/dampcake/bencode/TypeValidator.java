@@ -29,6 +29,6 @@ final class TypeValidator implements Validator {
     }
 
     public boolean validate(final int token) {
-        return token == type;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

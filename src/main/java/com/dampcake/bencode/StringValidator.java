@@ -23,6 +23,6 @@ package com.dampcake.bencode;
 final class StringValidator implements Validator {
 
     public boolean validate(final int token) {
-        return Character.isDigit(token);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }
